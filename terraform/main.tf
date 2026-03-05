@@ -3,7 +3,7 @@ module "networking" {
   compartment_id = var.compartment_id
 }
 
-module "oke" {
+/*module "oke" {
   source         = "./modules/oke"
   compartment_id = var.compartment_id
   vcn_id         = module.networking.vcn_id
@@ -24,7 +24,7 @@ module "redis" {
   compartment_id      = var.compartment_id
   availability_domain = local.availability_domain
   subnet_id           = module.networking.db_subnet_id
-}
+}*/
 
 module "nosql" {
   source         = "./modules/nosql"
