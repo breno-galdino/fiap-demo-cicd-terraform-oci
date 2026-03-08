@@ -44,6 +44,7 @@ module "oke" {
   source = "./modules/oke"
 
   compartment_id      = var.compartment_id
+  tenancy_ocid   = var.tenancy_ocid
   vcn_id              = module.networking.vcn_id
   subnet_id           = module.networking.workers_subnet_id
   availability_domain = var.availability_domain

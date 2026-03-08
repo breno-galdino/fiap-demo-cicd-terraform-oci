@@ -1,40 +1,51 @@
-# DATA SOURCE (fica no topo do arquivo)
+############################################
+# DATA SOURCES
+############################################
+
+data "oci_identity_availability_domains" "ads" {
+  compartment_id = var.tenancy_ocid
+}
+
 data "oci_containerengine_node_pool_option" "node_pool_options" {
   node_pool_option_id = "all"
   compartment_id      = var.compartment_id
 }
 
+############################################
+# OKE CLUSTER
+############################################
+
 resource "oci_containerengine_cluster" "main" {
 
-  compartment_id     = var.compartment_id
-  kubernetes_version = "v1.34.2"
-
-  name = "togglemaster-oke"
+  compartment_id = var.compartment_id
+  name           = "togglemaster-oke"
 
   vcn_id = var.vcn_id
 
+  # versão suportada
+  kubernetes_version = "v1.31.1"
+
   endpoint_config {
     is_public_ip_enabled = true
-
-    subnet_id = var.subnet_id
+    subnet_id            = var.subnet_id
   }
 
   options {
-
     service_lb_subnet_ids = [
       var.subnet_id
     ]
-
   }
-
-
 }
+
+############################################
+# NODE POOL
+############################################
 
 resource "oci_containerengine_node_pool" "pool" {
 
+  name           = "togglemaster-nodepool"
   cluster_id     = oci_containerengine_cluster.main.id
   compartment_id = var.compartment_id
-  name           = "togglemaster-nodepool"
 
   kubernetes_version = oci_containerengine_cluster.main.kubernetes_version
 
@@ -46,21 +57,26 @@ resource "oci_containerengine_node_pool" "pool" {
 
     placement_configs {
 
-      availability_domain = var.availability_domain
-      subnet_id           = var.subnet_id
+      # pega automaticamente o AD correto
+      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
 
+      subnet_id = var.subnet_id
     }
   }
 
   node_shape_config {
-
     ocpus         = 1
     memory_in_gbs = 6
   }
 
-node_source_details {
-  source_type = "IMAGE"
-  image_id    = data.oci_containerengine_node_pool_option.node_pool_options.sources[0].image_id
-}
+  node_source_details {
 
+    source_type = "IMAGE"
+
+    image_id = data.oci_containerengine_node_pool_option.node_pool_options.sources[0].image_id
+  }
+
+  depends_on = [
+    oci_containerengine_cluster.main
+  ]
 }
