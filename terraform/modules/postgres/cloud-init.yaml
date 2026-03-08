@@ -1,0 +1,27 @@
+#cloud-config
+
+packages:
+  - postgresql-server
+  - postgresql
+
+runcmd:
+
+  - sudo postgresql-setup --initdb
+
+  - sudo systemctl enable postgresql
+  - sudo systemctl start postgresql
+
+  - sudo mkdir -p /var/lib/pgsql/14/data2
+  - sudo mkdir -p /var/lib/pgsql/14/data3
+
+  - sudo chown -R postgres:postgres /var/lib/pgsql/14/data2
+  - sudo chown -R postgres:postgres /var/lib/pgsql/14/data3
+
+  - sudo -u postgres /usr/bin/initdb -D /var/lib/pgsql/14/data2
+  - sudo -u postgres /usr/bin/initdb -D /var/lib/pgsql/14/data3
+
+  - echo "port=5433" | sudo tee -a /var/lib/pgsql/14/data2/postgresql.conf
+  - echo "port=5434" | sudo tee -a /var/lib/pgsql/14/data3/postgresql.conf
+
+  - sudo -u postgres pg_ctl -D /var/lib/pgsql/14/data2 -l logfile start
+  - sudo -u postgres pg_ctl -D /var/lib/pgsql/14/data3 -l logfile start
