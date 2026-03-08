@@ -39,7 +39,3 @@ resource "oci_core_instance" "postgres" {
     user_data           = base64encode(file("${path.module}/cloud-init.yaml"))
   }
 }
-
-data "oci_identity_availability_domains" "ads" {
-  compartment_id = var.compartment_id
-}
