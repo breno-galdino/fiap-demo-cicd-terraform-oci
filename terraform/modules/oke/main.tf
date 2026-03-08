@@ -50,10 +50,4 @@ resource "oci_containerengine_node_pool" "pool" {
     memory_in_gbs = 6
   }
 
-  node_source_details {
-
-    image_id    = var.node_image
-    source_type = "image"
-  }
-
 }
