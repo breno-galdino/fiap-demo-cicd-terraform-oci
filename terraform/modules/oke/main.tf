@@ -61,7 +61,6 @@ resource "oci_containerengine_node_pool" "pool" {
 
     placement_configs {
 
-      # pega automaticamente o AD correto
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
 
       subnet_id = var.node_subnet_id
@@ -71,13 +70,6 @@ resource "oci_containerengine_node_pool" "pool" {
   node_shape_config {
     ocpus         = 1
     memory_in_gbs = 6
-  }
-
-  node_source_details {
-
-    source_type = "IMAGE"
-
-    image_id = data.oci_containerengine_node_pool_option.node_pool_options.sources[0].image_id
   }
 
   depends_on = [
