@@ -11,19 +11,23 @@ data "oci_containerengine_node_pool_option" "node_pool_options" {
   compartment_id      = var.compartment_id
 }
 
+
 ############################################
 # OKE CLUSTER
 ############################################
-
 resource "oci_containerengine_cluster" "main" {
 
   compartment_id = var.compartment_id
   name           = "togglemaster-oke"
 
   vcn_id = var.vcn_id
-
-  # versão suportada
   kubernetes_version = "v1.31.1"
+
+  lifecycle {
+    ignore_changes = [
+      kubernetes_version
+    ]
+  }
 
   endpoint_config {
     is_public_ip_enabled = true
@@ -31,11 +35,11 @@ resource "oci_containerengine_cluster" "main" {
   }
 
   options {
-    service_lb_subnet_ids = [
-      var.subnet_id
-    ]
+    service_lb_subnet_ids = [var.subnet_id]
   }
+
 }
+
 
 ############################################
 # NODE POOL
