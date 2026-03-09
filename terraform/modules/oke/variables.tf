@@ -8,3 +8,11 @@ variable "tenancy_ocid" {
   description = "OCI Tenancy OCID"
   type        = string
 }
+
+variable "node_subnet_id" {
+  type = string
+}
+
+variable "lb_subnet_id" {
+  type = string
+}

@@ -49,4 +49,6 @@ module "oke" {
   subnet_id           = module.networking.workers_subnet_id
   availability_domain = var.availability_domain
   node_image          = var.oke_image
+  node_subnet_id = module.networking.node_subnet_id
+  lb_subnet_id   = module.networking.lb_subnet_id
 }

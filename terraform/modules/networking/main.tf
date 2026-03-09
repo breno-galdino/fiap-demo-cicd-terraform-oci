@@ -76,3 +76,17 @@ resource "oci_core_subnet" "db" {
     oci_core_security_list.public_sl.id
   ]
 }
+
+resource "oci_core_subnet" "oke_nodes" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.main.id
+  cidr_block     = "10.0.10.0/24"
+  display_name   = "oke-nodes-subnet"
+}
+
+resource "oci_core_subnet" "oke_lb" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.main.id
+  cidr_block     = "10.0.20.0/24"
+  display_name   = "oke-lb-subnet"
+}

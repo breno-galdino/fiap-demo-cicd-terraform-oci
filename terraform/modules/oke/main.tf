@@ -35,7 +35,7 @@ resource "oci_containerengine_cluster" "main" {
   }
 
   options {
-    service_lb_subnet_ids = [var.subnet_id]
+    service_lb_subnet_ids = [var.lb_subnet_id]
   }
 
 }
@@ -64,7 +64,7 @@ resource "oci_containerengine_node_pool" "pool" {
       # pega automaticamente o AD correto
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
 
-      subnet_id = var.subnet_id
+      subnet_id = var.node_subnet_id
     }
   }
 
