@@ -53,6 +53,17 @@ jobs:
           NAMESPACE=$($HOME/bin/oci os ns get --query 'data' --raw-output)
           echo "namespace=$NAMESPACE" >> $GITHUB_OUTPUT
 
+      - name: Validate OCIR secrets
+        run: |
+          if [ -z "${{ secrets.OCI_AUTH_TOKEN }}" ]; then
+            echo "::error::OCI_AUTH_TOKEN secret is not configured. Go to OCI Console -> User Settings -> Auth Tokens -> Generate Token, then add it as a GitHub Secret."
+            exit 1
+          fi
+          if [ -z "${{ secrets.OCI_USERNAME }}" ]; then
+            echo "::error::OCI_USERNAME secret is not configured. Add your OCI username (email) as a GitHub Secret."
+            exit 1
+          fi
+
       - name: Login to OCIR
         run: |
           NAMESPACE=${{ steps.oci-ns.outputs.namespace }}
