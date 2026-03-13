@@ -2,6 +2,7 @@ resource "oci_core_vcn" "main" {
   compartment_id = var.compartment_id
   cidr_block     = "10.0.0.0/16"
   display_name   = "togglemaster-vcn"
+  dns_label      = "togglemastervcn"
 }
 
 # Internet Gateway
@@ -119,6 +120,7 @@ resource "oci_core_subnet" "db" {
   vcn_id         = oci_core_vcn.main.id
   cidr_block     = "10.0.5.0/24"
   display_name   = "db-subnet"
+  dns_label      = "dbsubnet"
 
   route_table_id = oci_core_route_table.public_rt.id
 

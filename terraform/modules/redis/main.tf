@@ -9,6 +9,7 @@ resource "oci_core_instance" "redis" {
   create_vnic_details {
     subnet_id        = var.subnet_id
     assign_public_ip = true
+    hostname_label   = "redis-vm"
   }
 
   source_details {

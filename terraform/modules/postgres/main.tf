@@ -27,6 +27,7 @@ resource "oci_core_instance" "postgres" {
   create_vnic_details {
     subnet_id        = var.subnet_id
     assign_public_ip = true
+    hostname_label   = "postgres-vm"
   }
 
   source_details {
