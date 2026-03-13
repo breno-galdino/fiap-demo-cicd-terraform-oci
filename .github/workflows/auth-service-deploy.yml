@@ -124,25 +124,27 @@ jobs:
           curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
           echo "$HOME/bin" >> $GITHUB_PATH
 
+      - name: Test OCI CLI
+        run: |
+          oci os ns get --region ${{ env.OCI_REGION }}
+
       - name: Get OKE Cluster kubeconfig
         run: |
           CLUSTER_ID=$(oci ce cluster list \
-                --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
-                --region ${{ env.OCI_REGION }} \
-                --query 'data[?name==`togglemaster-oke`].id | [0]' \
-                --raw-output)
-                
-          if [ -z "$CLUSTER_ID" ] || [ "$CLUSTER_ID" == "null" ]; then
-                      echo "Erro: Cluster togglemaster-oke não encontrado na região ${{ env.OCI_REGION }}"
-                      exit 1
-                    fi
-               mkdir -p $HOME/.kube
+            --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
+            --region ${{ env.OCI_REGION }} \
+            --query "data[?name=='togglemaster-oke'].id | [0]" \
+            --raw-output)
 
-              oci ce cluster create-kubeconfig \
-                    --cluster-id $CLUSTER_ID \
-                    --file $HOME/.kube/config \
-                    --region ${{ env.OCI_REGION }} \
-                    --token-version 2.0.0
+          echo "Cluster ID: $CLUSTER_ID"
+
+          mkdir -p $HOME/.kube
+
+          oci ce cluster create-kubeconfig \
+            --cluster-id $CLUSTER_ID \
+            --file $HOME/.kube/config \
+            --region ${{ env.OCI_REGION }} \
+            --token-version 2.0.0
 
       - name: Get OCI Namespace
         id: oci-ns
