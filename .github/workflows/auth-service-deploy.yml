@@ -1,10 +1,10 @@
-name: 'Auth Service - Build & Deploy'
+name: "Auth Service - Build & Deploy"
 
 on:
   push:
     branches: [main]
     paths:
-      - 'auth-service/**'
+      - "auth-service/**"
   workflow_dispatch:
 
 env:
@@ -13,7 +13,7 @@ env:
 
 jobs:
   build-and-push:
-    name: 'Build & Push Image'
+    name: "Build & Push Image"
     runs-on: ubuntu-latest
 
     steps:
@@ -91,7 +91,7 @@ jobs:
           echo "- **Tag:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
 
   deploy:
-    name: 'Deploy to OKE'
+    name: "Deploy to OKE"
     runs-on: ubuntu-latest
     needs: build-and-push
     environment: dev
@@ -126,17 +126,18 @@ jobs:
 
       - name: Get OKE Cluster kubeconfig
         run: |
-          CLUSTER_ID=$($HOME/bin/oci ce cluster list \
-            --compartment-id ${{ secrets.OCI_COMPARTIMENT_ID }} \ 
-            --query 'data[?name==`togglemaster-oke`].id | [0]' \
-            --raw-output)
+          CLUSTER_ID=$(oci ce cluster list \
+                --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
+                --query 'data[?name==`togglemaster-oke`].id | [0]' \
+                --raw-output)
 
-          mkdir -p $HOME/.kube
-          $HOME/bin/oci ce cluster create-kubeconfig \
-            --cluster-id $CLUSTER_ID \
-            --file $HOME/.kube/config \
-            --region ${{ env.OCI_REGION }} \
-            --token-version 2.0.0
+               mkdir -p $HOME/.kube
+
+              oci ce cluster create-kubeconfig \
+                    --cluster-id $CLUSTER_ID \
+                    --file $HOME/.kube/config \
+                    --region ${{ env.OCI_REGION }} \
+                    --token-version 2.0.0
 
       - name: Get OCI Namespace
         id: oci-ns
