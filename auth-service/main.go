@@ -87,6 +87,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/health", healthHandler)
+	mux.HandleFunc("/health/db", dbHealthHandler)
 	mux.HandleFunc("/validate", validateHandler)
 	mux.HandleFunc("/admin/keys", adminKeysHandler(masterKey))
 
@@ -104,6 +105,42 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(HealthResponse{Status: "ok"})
+}
+
+func dbHealthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	err := db.Ping()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status": "error",
+			"error":  fmt.Sprintf("Database connection failed: %v", err),
+		})
+		return
+	}
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM api_keys").Scan(&count)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status": "error",
+			"error":  fmt.Sprintf("Query failed: %v", err),
+		})
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status":    "ok",
+		"db_ping":   "success",
+		"key_count": count,
+	})
 }
 
 func validateHandler(w http.ResponseWriter, r *http.Request) {

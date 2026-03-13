@@ -33,11 +33,23 @@ Servico de autenticacao do projeto ToggleMaster. Responsavel por criar e validar
 
 ## Endpoints
 
-| Metodo | Endpoint       | Descricao                     | Autenticacao       |
-|--------|----------------|-------------------------------|--------------------|
-| GET    | `/health`      | Health check                  | Nenhuma            |
-| POST   | `/admin/keys`  | Criar nova chave de API       | Bearer MASTER_KEY  |
-| GET    | `/validate`    | Validar chave de API          | Bearer API_KEY     |
+- `GET /health`: Health check simples da aplicação.
+- `GET /health/db`: Health check que verifica a conexão e conectividade com o banco de dados (Smoke Test).
+- `POST /admin/keys`: Cria uma nova chave de API (requer `MASTER_KEY` no header `Authorization: Bearer <key>`).
+- `GET /validate`: Valida uma chave de API (requer a chave no header `Authorization: Bearer <key>`).
+
+### Testando os Endpoints
+
+Você pode testar os endpoints de duas formas:
+
+1. **REST Client (VS Code):** Use o arquivo `tests/api-tests.http` na raiz do projeto.
+2. **Script Shell:** Use o script `scripts/test-services.sh <IP_DO_LB>`.
+
+Exemplo via curl:
+```bash
+# Health DB
+curl http://<IP_DO_LB>:8001/health/db
+```
 
 ## Deploy no OKE
 
