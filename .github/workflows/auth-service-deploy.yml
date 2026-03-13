@@ -128,9 +128,14 @@ jobs:
         run: |
           CLUSTER_ID=$(oci ce cluster list \
                 --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
+                --region ${{ env.OCI_REGION }} \
                 --query 'data[?name==`togglemaster-oke`].id | [0]' \
                 --raw-output)
-
+                
+          if [ -z "$CLUSTER_ID" ] || [ "$CLUSTER_ID" == "null" ]; then
+                      echo "Erro: Cluster togglemaster-oke não encontrado na região ${{ env.OCI_REGION }}"
+                      exit 1
+                    fi
                mkdir -p $HOME/.kube
 
               oci ce cluster create-kubeconfig \
