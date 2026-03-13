@@ -127,7 +127,7 @@ jobs:
       - name: Get OKE Cluster kubeconfig
         run: |
           CLUSTER_ID=$($HOME/bin/oci ce cluster list \
-            --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
+            --compartment-id ${{ secrets.OCI_COMPARTIMENT_ID }} \ 
             --query 'data[?name==`togglemaster-oke`].id | [0]' \
             --raw-output)
 
