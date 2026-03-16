@@ -1,0 +1,4 @@
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/go-redis/redis/v8 v8.11.5 h1:76nS6I8RkS2/2T5f+Y2c6c4c0y6e2R6e0/h07y1jLpA=
+github.com/go-redis/redis/v8 v8.11.5/go.mod h1:fL6/6S8Zf6W8W3D9e/9L0f8m5pA=
