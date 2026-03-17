@@ -26,6 +26,40 @@ if not DATABASE_URL or not AUTH_SERVICE_URL:
     log.critical("Erro: DATABASE_URL e AUTH_SERVICE_URL devem ser definidos.")
     sys.exit(1)
 
+# --- Inicialização do Banco de Dados ---
+def init_db():
+    """ Cria as tabelas necessárias se não existirem """
+    conn = None
+    try:
+        log.info("Verificando/Criando tabelas no banco de dados...")
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        
+        # Cria a tabela flags
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS flags (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL UNIQUE,
+                description TEXT,
+                is_enabled BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE INDEX IF NOT EXISTS idx_flags_name ON flags(name);
+        """)
+        
+        conn.commit()
+        cur.close()
+        log.info("Tabelas verificadas/criadas com sucesso.")
+    except Exception as e:
+        log.error(f"Erro ao inicializar o banco de dados: {e}")
+        if conn: conn.rollback()
+    finally:
+        if conn: conn.close()
+
+# Executa a inicialização antes de criar o pool
+init_db()
+
 # --- Pool de Conexão com o Banco ---
 # Inicializa o pool de conexões (Mín: 1, Máx: 5 conexões)
 try:
