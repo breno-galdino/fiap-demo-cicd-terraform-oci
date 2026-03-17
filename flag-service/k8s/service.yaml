@@ -6,7 +6,7 @@ metadata:
   labels:
     app: flag-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: flag-service
   ports:
